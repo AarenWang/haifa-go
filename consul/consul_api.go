@@ -1,4 +1,4 @@
-package main
+package consul
 
 import (
 	"fmt"
@@ -6,25 +6,17 @@ import (
 	"github.com/hashicorp/consul/api"
 )
 
-func main() {
+func InitClient() *api.Client {
 
 	client, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
 		panic(err)
 	}
-
-	// Lookup the pair
-	kv_optional(client, err)
-
-	service_registery(client)
-
-	//client.Agent().ServiceDeregister("myblog-1")
-
-	service_query(client)
+	return client
 
 }
 
-func service_query(client *api.Client) {
+func ServiceQuery(client *api.Client) {
 	services, _, err := client.Catalog().Services(nil)
 	if err != nil {
 		panic(err)
@@ -35,7 +27,7 @@ func service_query(client *api.Client) {
 	}
 }
 
-func service_registery(client *api.Client) {
+func ServiceRegistry(client *api.Client) {
 	blog := &api.AgentServiceRegistration{
 		ID:      "myblog-1",
 		Name:    "myblog",
@@ -65,10 +57,13 @@ func service_registery(client *api.Client) {
 	}
 
 	client.Agent().ServiceRegister(blog2)
-
 }
 
-func kv_optional(client *api.Client, err error) {
+func ServiceDeregister(client *api.Client, serviceId string) {
+	client.Agent().ServiceDeregister(serviceId)
+}
+
+func KvOptional(client *api.Client, err error) {
 	kv := client.KV()
 
 	p := &api.KVPair{Key: "REDIS_MAXCLIENTS", Value: []byte("1000")}
@@ -82,4 +77,25 @@ func kv_optional(client *api.Client, err error) {
 		panic(err)
 	}
 	fmt.Printf("KV: %v %s\n", pair.Key, pair.Value)
+}
+
+func AgentServices(client *api.Client) {
+
+	agentService, err := client.Agent().Services()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, service := range agentService {
+		id := service.ID
+		serviceName := service.Service
+		tags := service.Tags
+		address := service.Address
+		port := service.Port
+
+		//fmt.Printf("service.name=%s, servicve.tag=%v \n", name, service)
+		fmt.Printf("service.id=%s, service.name=%s, service.tags = %s, service.address=%s, servicve.port=%d \n", id, serviceName, tags, address, port)
+
+	}
+
 }

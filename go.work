@@ -8,3 +8,4 @@ use ./codewalk
 use ./draveness
 use ./go-lib
 use ./websocket
+use consul
