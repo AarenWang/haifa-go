@@ -8,4 +8,7 @@ use ./codewalk
 use ./draveness
 use ./go-lib
 use ./websocket
-use consul
+use ./consul
+use ./context_values
+use ./context_cancel
+use ./context_demo
