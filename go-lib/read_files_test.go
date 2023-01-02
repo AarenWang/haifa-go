@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"testing"
 )
 
 func check(e error) {
@@ -14,13 +15,14 @@ func check(e error) {
 	}
 }
 
-func main() {
+func TestFileRead(t *testing.T) {
 
 	dat, err := ioutil.ReadFile("/tmp/dat")
 	check(err)
 	fmt.Print(string(dat))
 
 	f, err := os.Open("/tmp/dat")
+	defer f.Close()
 	check(err)
 
 	b1 := make([]byte, 5)
@@ -51,5 +53,4 @@ func main() {
 	check(err)
 	fmt.Printf("5 bytes: %s\n", string(b4))
 
-	f.Close()
 }

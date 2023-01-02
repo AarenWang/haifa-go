@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"testing"
 )
 
 type IT struct {
@@ -12,7 +13,7 @@ type IT struct {
 	Price    float64  `json:"price"`
 }
 
-func main() {
+func TestJson(t *testing.T) {
 
 	jsonBuf := `
     {
