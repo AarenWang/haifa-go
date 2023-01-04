@@ -12,3 +12,4 @@ use ./consul
 use ./context_values
 use ./context_cancel
 use ./context_demo
+use ./etcd
