@@ -1,6 +1,7 @@
 go 1.19
 
 use ./grpc
+use ./grpc_tls
 use ./go-micro
 use ./gotest
 use ./concurrent
