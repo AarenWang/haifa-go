@@ -6,7 +6,6 @@ use ./go-micro
 use ./gotest
 use ./concurrent
 use ./codewalk
-use ./draveness
 use ./go-lib
 use ./websocket
 use ./consul

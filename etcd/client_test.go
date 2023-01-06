@@ -24,11 +24,13 @@ func TestTLSClient(t *testing.T) {
 	var etcdCertKey = homedir + "/dev/biz-workspace/service-solution/certs/client.key"
 	var etcdCa = homedir + "/dev/biz-workspace/service-solution/certs/ca.crt"
 
+	// 加载客户端证书
 	cert, err := tls.LoadX509KeyPair(etcdCert, etcdCertKey)
 	if err != nil {
 		return
 	}
 
+	// 加载 CA 证书
 	caData, err := ioutil.ReadFile(etcdCa)
 	if err != nil {
 		return
@@ -44,7 +46,7 @@ func TestTLSClient(t *testing.T) {
 
 	cfg := clientv3.Config{
 		Endpoints: endpoints,
-		TLS:       _tlsConfig,
+		TLS:       _tlsConfig, // Client.Config设置 TLS
 	}
 
 	cli, err := clientv3.New(cfg)
@@ -55,8 +57,7 @@ func TestTLSClient(t *testing.T) {
 
 	defer cli.Close()
 
-	key1, value1 := "testkey1", "value"
-
+	key1, value1 := "testkey1", "testvalue"
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	_, err = cli.Put(ctx, key1, value1)
 	cancel()
