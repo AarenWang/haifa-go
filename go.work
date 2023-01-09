@@ -14,3 +14,5 @@ use ./context_cancel
 use ./context_demo
 use ./etcd
 use ./reflect
+use ./generic
+use ./channel

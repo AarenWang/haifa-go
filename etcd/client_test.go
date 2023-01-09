@@ -15,20 +15,17 @@ import (
 var (
 	dialTimeout    = 5 * time.Second
 	requestTimeout = 4 * time.Second
-	//endpoints      = []string{"192.168.31.17:2379"}
+	//endpoints      = []string{"https://192.168.31.17:2379"}
 	endpoints = []string{"127.0.0.1:2379"}
 )
 
-func TestLease(t *testing.T) {
+func TestLeaseTTL(t *testing.T) {
 
 	cfg := clientv3.Config{
 		Endpoints: endpoints,
 	}
-
 	cli, err := clientv3.New(cfg)
-
 	if err != nil {
-		//log.Fatal(err)
 		panic(err)
 	}
 
@@ -54,11 +51,14 @@ func TestLease(t *testing.T) {
 		panic(err)
 	}
 
-	// 保持租约
-	lease.TimeToLive(context.Background(), clientv3.LeaseID(leaseID), clientv3.WithAttachedKeys())
+	// 保持租约 直到程序退出
+	//lease.KeepAlive(context.Background(), clientv3.LeaseID(leaseID))
 
 	// 等等超过3秒
-	time.Sleep(4 * time.Second)
+	time.Sleep(2 * time.Second)
+
+	// 租约 续约
+	lease.KeepAliveOnce(context.Background(), clientv3.LeaseID(leaseID))
 
 	// 5秒后过期的key
 	rsp, err := cli.Get(context.Background(), key)
