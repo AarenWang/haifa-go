@@ -35,6 +35,7 @@ func Test2(t *testing.T) {
 	ticker := time.NewTicker(time.Second * 2)
 	go func() {
 		for {
+			// 到达定时周期时，会向通道发送一个时间值
 			<-ticker.C
 			fmt.Println("ticker: Time Reach!")
 		}
