@@ -1,5 +1,5 @@
 .idea/
 .vscode/
-grpc_tls/certs
+grpc_tls/certs/
 !grpc_tls/certs/pki.sh
 !grpc_tls/certs/tree.txt
