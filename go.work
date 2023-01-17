@@ -17,3 +17,4 @@ use ./reflect
 use ./generic
 use ./channel
 use ./zaplog
+use ./option-pattern
