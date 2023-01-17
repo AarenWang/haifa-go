@@ -16,3 +16,4 @@ use ./etcd
 use ./reflect
 use ./generic
 use ./channel
+use ./zaplog
