@@ -1,4 +1,4 @@
-module github.com/aarenwang/go-haifa/grpc
+module github.com/aarenwang/haifa-go/grpc
 
 go 1.19
 

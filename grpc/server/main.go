@@ -7,7 +7,7 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/wangrenjun12/go-haifa/gorpc/greet"
+	pb "github.com/AarenWang/haifa-go/grpc/greet"
 	"google.golang.org/grpc"
 )
 
