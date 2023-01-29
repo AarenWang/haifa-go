@@ -1,6 +1,7 @@
 package option_pattern
 
 import (
+	"log"
 	"testing"
 	"time"
 )
@@ -11,4 +12,6 @@ func TestRequest(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	log.Println("Hello")
 }
