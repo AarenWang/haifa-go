@@ -105,7 +105,7 @@ func TestInitLogger(t *testing.T) {
 	fmt.Println("done")
 }
 
-func TestRoraRotateLogger(t *testing.T) {
+func TestRotateLogger(t *testing.T) {
 
 	rorateWritter := getRorateWritter()
 	encoder := getEncoder()
