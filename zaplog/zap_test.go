@@ -90,7 +90,7 @@ func InitLogger() {
 	encoder := getEncoder()
 	core := zapcore.NewCore(encoder, writeSyncer, zapcore.DebugLevel)
 
-	logger = zap.New(core, zap.AddCaller())
+	logger = zap.New(core)
 }
 
 func TestInitLogger(t *testing.T) {
@@ -134,6 +134,5 @@ func getRorateWritter() zapcore.WriteSyncer {
 		Compress:   true, //是否压缩
 		LocalTime:  false,
 	}
-
 	return zapcore.AddSync(&hook)
 }

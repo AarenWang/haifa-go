@@ -137,6 +137,7 @@ func New(writer io.Writer, level Level) *Logger {
 	if writer == nil {
 		panic("the writer is nil")
 	}
+
 	cfg := zap.NewProductionConfig()
 	core := zapcore.NewCore(
 		zapcore.NewJSONEncoder(cfg.EncoderConfig),
@@ -147,6 +148,7 @@ func New(writer io.Writer, level Level) *Logger {
 		l:     zap.New(core),
 		level: level,
 	}
+
 	return logger
 }
 
