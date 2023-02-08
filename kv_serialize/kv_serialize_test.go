@@ -110,4 +110,11 @@ func TestValueToString(t *testing.T) {
 	strVal = float64Store.ValueToString()
 	fmt.Println("float64_store:", strVal)
 
+	var i int = 10
+	intPointerStore := KV_Store[*int]{
+		kv: &KV[*int]{key: "test_pointer_int", value: &i},
+	}
+	strVal = intPointerStore.ValueToString()
+	fmt.Println("int_pointer_store:", strVal)
+
 }

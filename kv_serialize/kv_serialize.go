@@ -40,11 +40,11 @@ func (s *KV_Store[T]) ValueToString() string {
 			}
 			return string(byte)
 		case reflect.String:
-			//return s.kv.value.(string)
 			return reflect.ValueOf(s.kv.value).String()
-
 		case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
-			return reflect.ValueOf(s.kv.value).String()
+			val := reflect.ValueOf(s.kv.value)
+			derefVal := val.Elem()
+			return fmt.Sprintf("%v", derefVal)
 		}
 		return ""
 	case reflect.Struct, reflect.Map, reflect.Slice, reflect.Array:
@@ -54,11 +54,8 @@ func (s *KV_Store[T]) ValueToString() string {
 		}
 		return string(byte)
 	case reflect.String:
-		//return s.kv.value.(string)
 		return reflect.ValueOf(s.kv.value).String()
 	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
-		//return reflect.ValueOf(s.kv.value).Interface().(string)
-		//return reflect.ValueOf(s.kv.value).String()
 		return fmt.Sprintf("%v", s.kv.value)
 	default:
 		log.Printf("cannot resolve type %s \n", resType.Kind().String())
