@@ -17,17 +17,17 @@ type KV[T any] struct {
 	value T
 }
 
-type KV_Store[T any] struct {
+type KvStore[T any] struct {
 	kv         *KV[T]
-	etcdClient clientv3.Client
+	etcdClient *clientv3.Client
 }
 
-func (s *KV_Store[T]) Store() {
+func (s *KvStore[T]) Store() {
 	s.etcdClient.Put(context.Background(), s.kv.key, s.ValueToString())
 
 }
 
-func (s *KV_Store[T]) ValueToString() string {
+func (s *KvStore[T]) ValueToString() string {
 	resType := reflect.TypeOf(s.kv.value)
 	switch resType.Kind() {
 	case reflect.Pointer:
@@ -63,8 +63,8 @@ func (s *KV_Store[T]) ValueToString() string {
 	}
 }
 
-func (s *KV_Store[T]) Recovery(key string) T {
-	getRsp, err := s.etcdClient.Get(context.Background(), key)
+func (s *KvStore[T]) Recovery() T {
+	getRsp, err := s.etcdClient.Get(context.Background(), s.kv.key)
 	if err != nil {
 		panic(err)
 	}
@@ -105,6 +105,9 @@ func parseBytes(b []byte, resType reflect.Type) reflect.Value {
 		str := string(b)
 		str = strings.Trim(str, "\"") //去掉双引号,否则 "test3" 会变成  "\"test3\""
 		n.Elem().SetString(str)
+	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
+		//
+
 	default:
 		log.Printf("cannot resolve type %s \n", resType.Kind().String())
 		return reflect.Value{}

@@ -72,49 +72,110 @@ func TestKVStruct(t *testing.T) {
 }
 
 func TestValueToString(t *testing.T) {
-	mapStore := KV_Store[map[string]string]{
+	mapStore := KvStore[map[string]string]{
 		kv: &KV[map[string]string]{key: "test_map", value: map[string]string{"1": "1"}},
 	}
 	strVal := mapStore.ValueToString()
 	fmt.Println("map_store:", strVal)
 
-	arrayStore := KV_Store[[2]string]{
+	arrayStore := KvStore[[2]string]{
 		kv: &KV[[2]string]{key: "test_array", value: [2]string{"1", "2"}},
 	}
 	strVal = arrayStore.ValueToString()
 	fmt.Println("array_store:", strVal)
 
-	pointerStore := KV_Store[*MyStruct]{
+	pointerStore := KvStore[*MyStruct]{
 		kv: &KV[*MyStruct]{key: "test_pointer", value: &MyStruct{Name: "1", Age: 1}},
 	}
 	strVal = pointerStore.ValueToString()
 	fmt.Println("pointer_store:", strVal)
 
-	stringStore := KV_Store[string]{
+	stringStore := KvStore[string]{
 		kv: &KV[string]{key: "test_string", value: "1"},
 	}
 
 	strVal = stringStore.ValueToString()
 	fmt.Println("string_store:", strVal)
 
-	intStore := KV_Store[int]{
+	intStore := KvStore[int]{
 		kv: &KV[int]{key: "test_int", value: 1},
 	}
 
 	strVal = intStore.ValueToString()
 	fmt.Println("int_store:", strVal)
 
-	float64Store := KV_Store[float64]{
+	float64Store := KvStore[float64]{
 		kv: &KV[float64]{key: "test_int", value: float64(10.01)},
 	}
 	strVal = float64Store.ValueToString()
 	fmt.Println("float64_store:", strVal)
 
 	var i int = 10
-	intPointerStore := KV_Store[*int]{
+	intPointerStore := KvStore[*int]{
 		kv: &KV[*int]{key: "test_pointer_int", value: &i},
 	}
 	strVal = intPointerStore.ValueToString()
 	fmt.Println("int_pointer_store:", strVal)
+}
 
+func TestKvStore_Recovery(t *testing.T) {
+	client, err := EtcdClient()
+	if err != nil {
+		panic("")
+	}
+
+	stringStore := KvStore[string]{
+		kv:         &KV[string]{key: "test_string", value: "1"},
+		etcdClient: client,
+	}
+
+	strVal := stringStore.ValueToString()
+	fmt.Println("string_store:", strVal)
+
+	arrayStore := KvStore[[2]string]{
+		kv:         &KV[[2]string]{key: "test_array", value: [2]string{"1", "2"}},
+		etcdClient: client,
+	}
+	strVal = arrayStore.ValueToString()
+	fmt.Println("array_store:", strVal)
+
+	mapStore := KvStore[map[string]string]{
+		kv:         &KV[map[string]string]{key: "test_map", value: map[string]string{"1": "1"}},
+		etcdClient: client,
+	}
+	strVal = mapStore.ValueToString()
+	fmt.Println("map_store:", strVal)
+	mapStore.Store()
+
+	mapStore.Recovery()
+
+	pointerStore := KvStore[*MyStruct]{
+		kv:         &KV[*MyStruct]{key: "test_pointer", value: &MyStruct{Name: "1", Age: 1}},
+		etcdClient: client,
+	}
+	strVal = pointerStore.ValueToString()
+	fmt.Println("pointer_store:", strVal)
+
+	intStore := KvStore[int]{
+		kv:         &KV[int]{key: "test_int", value: 1},
+		etcdClient: client,
+	}
+
+	strVal = intStore.ValueToString()
+	fmt.Println("int_store:", strVal)
+
+	float64Store := KvStore[float64]{
+		kv:         &KV[float64]{key: "test_int", value: float64(10.01)},
+		etcdClient: client,
+	}
+	strVal = float64Store.ValueToString()
+	fmt.Println("float64_store:", strVal)
+
+	var i int = 10
+	intPointerStore := KvStore[*int]{
+		kv:         &KV[*int]{key: "test_pointer_int", value: &i},
+		etcdClient: client,
+	}
+	strVal = intPointerStore.ValueToString()
+	fmt.Println("int_pointer_store:", strVal)
 }
