@@ -3,6 +3,7 @@ package kv_serialize
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
 	"log"
@@ -45,7 +46,6 @@ func (s *KV_Store[T]) ValueToString() string {
 		case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
 			return reflect.ValueOf(s.kv.value).String()
 		}
-
 		return ""
 	case reflect.Struct, reflect.Map, reflect.Slice, reflect.Array:
 		byte, err := json.Marshal(s.kv.value)
@@ -56,11 +56,10 @@ func (s *KV_Store[T]) ValueToString() string {
 	case reflect.String:
 		//return s.kv.value.(string)
 		return reflect.ValueOf(s.kv.value).String()
-	case reflect.Bool, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
+	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
 		//return reflect.ValueOf(s.kv.value).Interface().(string)
-		return reflect.ValueOf(s.kv.value).String()
-	case reflect.Int:
-		return reflect.ValueOf(s.kv.value).String()
+		//return reflect.ValueOf(s.kv.value).String()
+		return fmt.Sprintf("%v", s.kv.value)
 	default:
 		log.Printf("cannot resolve type %s \n", resType.Kind().String())
 		return ""
