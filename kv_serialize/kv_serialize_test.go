@@ -146,7 +146,6 @@ func TestKvStore_Recovery(t *testing.T) {
 	strVal = mapStore.ValueToString()
 	fmt.Println("map_store:", strVal)
 	mapStore.Store()
-
 	mapStore.Recovery()
 
 	pointerStore := KvStore[*MyStruct]{
@@ -155,6 +154,8 @@ func TestKvStore_Recovery(t *testing.T) {
 	}
 	strVal = pointerStore.ValueToString()
 	fmt.Println("pointer_store:", strVal)
+	pointerStore.Store()
+	pointerStore.Recovery()
 
 	intStore := KvStore[int]{
 		kv:         &KV[int]{key: "test_int", value: 1},
