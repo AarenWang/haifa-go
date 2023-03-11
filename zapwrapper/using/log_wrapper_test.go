@@ -5,7 +5,6 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 	"testing"
 )
 
@@ -20,11 +19,7 @@ func Test1(t *testing.T) {
 }
 
 func Test2(t *testing.T) {
-	logFile, err := os.Create("test.log")
-	if err != nil {
-		panic(err)
-	}
-	logger := log.New(logFile, log.InfoLevel)
+	logger := log.New("test.log", log.InfoLevel)
 	logger.Debug("test info")
 	logger.Info("test info")
 
@@ -34,8 +29,7 @@ func Test2(t *testing.T) {
 
 func Test3(t *testing.T) {
 
-	loggerWritter := getRorateWritter()
-	logger := log.New(loggerWritter, log.InfoLevel)
+	logger := log.New("stdout", log.InfoLevel)
 	logger.Debug("test debug") //debug级别的日志不会输出
 	logger.Info("test info")
 

@@ -1,9 +1,11 @@
 package log
 
 import (
+	"encoding/json"
+	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -126,23 +128,52 @@ type Logger struct {
 	level Level
 }
 
-var std = New(os.Stderr, InfoLevel)
+var std = New(os.Stderr.Name(), InfoLevel)
 
 func Default() *Logger {
 	return std
 }
 
 // New create a new logger (not support log rotating).
-func New(writer io.Writer, level Level) *Logger {
+func New(logPath string, level Level) *Logger {
+	writer := os.Stdout
+	if logPath == "" {
+		panic("the log path is empty")
+	}
+	if logPath == "stderr" {
+		writer = os.Stderr
+	}
+	if logPath != "stdout" && logPath != "stderr" {
+		f, err := os.OpenFile(logPath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+		if err != nil {
+			panic(err)
+		}
+		writer = f
+	}
 	if writer == nil {
 		panic("the writer is nil")
 	}
 
+	logConfig := readLogConfig()
+	var writeSyncer = zapcore.AddSync(writer)
+	if logConfig != nil && logConfig.Roll {
+		rollLogger := lumberjack.Logger{
+			Filename:   logConfig.Filename,
+			MaxSize:    logConfig.MaxSize,    //日志最大的大小（M）
+			MaxBackups: logConfig.MaxBackups, //备份个数
+			MaxAge:     logConfig.MaxAge,     //最大保存天数（day）
+			Compress:   logConfig.Compress,   //是否压缩
+			LocalTime:  false,
+		}
+		writeSyncer = zapcore.AddSync(&rollLogger)
+	}
+
 	cfg := zap.NewProductionConfig()
+
 	core := zapcore.NewCore(
 		zapcore.NewJSONEncoder(cfg.EncoderConfig),
-		zapcore.AddSync(writer),
-		zapcore.Level(level),
+		writeSyncer,
+		getZapLogLevel(level.String()),
 	)
 	logger := &Logger{
 		l:     zap.New(core),
@@ -150,6 +181,48 @@ func New(writer io.Writer, level Level) *Logger {
 	}
 
 	return logger
+}
+
+func getZapLogLevel(level string) zapcore.Level {
+	switch level {
+	case "debug":
+		return zapcore.DebugLevel
+	case "info":
+		return zapcore.InfoLevel
+	case "warn":
+		return zapcore.WarnLevel
+	case "error":
+		return zapcore.ErrorLevel
+	case "panic":
+		return zapcore.DPanicLevel
+	case "fatal":
+		return zapcore.FatalLevel
+	default:
+		return zapcore.InfoLevel
+	}
+}
+
+func readLogConfig() *LogConfig {
+	logConfigFile, err := os.Open("log_config.json")
+	if err != nil {
+		println("Error opening log configuration file:", err.Error())
+		os.Exit(1)
+	}
+	defer logConfigFile.Close()
+
+	logConfigBytes, err := ioutil.ReadAll(logConfigFile)
+	if err != nil {
+		println("Error reading log configuration file:", err.Error())
+		os.Exit(1)
+	}
+
+	var logConfig LogConfig
+	err = json.Unmarshal(logConfigBytes, &logConfig)
+	if err != nil {
+		println("Error parsing log configuration file:", err.Error())
+		os.Exit(1)
+	}
+	return &logConfig
 }
 
 func (l *Logger) Sync() error {
@@ -161,4 +234,14 @@ func Sync() error {
 		return std.Sync()
 	}
 	return nil
+}
+
+type LogConfig struct {
+	Level      string `json:"level"`
+	Roll       bool   `json:"roll"`
+	Filename   string `json:"filename"`
+	MaxSize    int    `json:"max_size"`
+	MaxBackups int    `json:"max_backups"`
+	MaxAge     int    `json:"max_age"`
+	Compress   bool   `json:"compress"`
 }

@@ -1,4 +1,4 @@
-package main
+package reflect_1
 
 import (
 	"encoding/json"
@@ -22,6 +22,7 @@ const (
 )
 
 func TestF2(t *testing.T) {
+
 	// 声明一个空结构体
 	type cat struct {
 	}

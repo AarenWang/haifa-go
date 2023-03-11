@@ -5,29 +5,19 @@ import (
 	"testing"
 )
 
-type Store[T any] interface {
-	Save(entity Entity[T])
-	Load(entity Entity[T])
-}
+// Generic is a generic type
+func Test_1(t *testing.T) {
+	type Slice[T int | float32 | float64] []T
 
-type Entity[T any] struct {
-	data T
-}
+	var s1 Slice[int] = []int{1, 2, 3}
+	fmt.Printf("Type Name: %T \n", s1) // generic.Slice[int]
 
-type DBStore struct {
-}
+	var b Slice[float32] = []float32{1.0, 2.0, 3.0}
+	fmt.Printf("Type Name: %T \n", b) // generic.Slice[float32]
 
-func (d *DBStore) Save(entity Entity[int]) {
-	fmt.Println("save to db")
-}
+	type MyMap[KEY int | string, VALUE float32 | float64] map[KEY]VALUE
 
-func (d *DBStore) Load(entity Entity[int]) {
-	fmt.Println("load from db")
-}
-
-func Test1(t *testing.T) {
-	db := &DBStore{}
-	e := Entity[int]{data: 1}
-	db.Save(e)
+	var m1 MyMap[int, float32] = map[int]float32{1: 1.0, 2: 2.0, 3: 3.0}
+	fmt.Printf("Type Name: %T \n", m1) // generic.MyMap[int,float32]
 
 }

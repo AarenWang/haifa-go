@@ -26,8 +26,8 @@ func newElemWhenNil(data any) {
 		return
 	}
 	//不知要如何判断是否nil
-	//go语言的bug：reflect.ValueOf(nil).IsNil()是不允许的，会报错
-	//if !reflect.ValueOf(data).Elem().IsNil() {
+	//go语言的bug：reflect_1.ValueOf(nil).IsNil()是不允许的，会报错
+	//if !reflect_1.ValueOf(data).Elem().IsNil() {
 	//	return
 	//}
 
@@ -51,8 +51,8 @@ func TestFunc1(t *testing.T) {
 
 func TestFunc2(t *testing.T) {
 
-	//panic: reflect: call of reflect.Value.IsNil on zero Value [recovered]
-	//panic: reflect: call of reflect.Value.IsNil on zero Value
+	//panic: reflect_1: call of reflect_1.Value.IsNil on zero Value [recovered]
+	//panic: reflect_1: call of reflect_1.Value.IsNil on zero Value
 	data := func3()
 	fmt.Printf("data Type: %T", data)
 
@@ -78,14 +78,14 @@ func InitPointerData(data any) {
 	typeOfElem := typeOf.Elem()
 	fmt.Printf("typeOfElem name:'%v' kind:'%v'\n", typeOfElem.Name(), typeOfElem.Kind())
 
-	//reflect.ValueOf(typeOf).SetPointer(unsafe.Pointer(reflect.ValueOf(typeOfElem).Pointer())) // panic: reflect: reflect.Value.SetPointer using unaddressable value
-	//reflect.ValueOf(typeOfElem).Pointer() // uintptr
+	//reflect_1.ValueOf(typeOf).SetPointer(unsafe.Pointer(reflect_1.ValueOf(typeOfElem).Pointer())) // panic: reflect_1: reflect_1.Value.SetPointer using unaddressable value
+	//reflect_1.ValueOf(typeOfElem).Pointer() // uintptr
 
-	//reflect.ValueOf(typeOf).SetPointer(reflect.ValueOf(typeOfElem).UnsafePointer()) //  panic: reflect: reflect.Value.SetPointer using unaddressable value [recovered]
+	//reflect_1.ValueOf(typeOf).SetPointer(reflect_1.ValueOf(typeOfElem).UnsafePointer()) //  panic: reflect_1: reflect_1.Value.SetPointer using unaddressable value [recovered]
 
-	//va := reflect.ValueOf(data).Elem()
-	////v := reflect.New(va.Type().Elem())
-	//v := reflect.New(reflect.TypeOf(data).Elem())
+	//va := reflect_1.ValueOf(data).Elem()
+	////v := reflect_1.New(va.Type().Elem())
+	//v := reflect_1.New(reflect_1.TypeOf(data).Elem())
 	//va.SetPointer(unsafe.Pointer(v.UnsafeAddr()))
 	data = reflect.New(typeOf)
 }
